@@ -1,28 +1,40 @@
-import express from "express"
-import dotenv from "dotenv"
-dotenv.config()
-import connectDb from "./config/db.js"
-import authRouter from "./routes/auth.routes.js"
-import cors from "cors"
-import cookieParser from "cookie-parser"
-import userRouter from "./routes/user.routes.js"
-import geminiResponse from "./gemini.js"
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+import userRouter from "./routes/user.routes.js";
+import authRouter from "./routes/auth.routes.js";
+import geminiResponse from "./gemini.js";
 
+dotenv.config();
 
-const app=express()
+const app = express();
+
 app.use(cors({
-    origin:"http://localhost:5173",
-    credentials:true
-}))
-const port=process.env.PORT || 5000
-app.use(express.json())
-app.use(cookieParser())
-app.use("/api/auth",authRouter)
-app.use("/api/user",userRouter)
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 
+app.use(express.json());
+app.use(cookieParser());
 
-app.listen(port,()=>{
-    connectDb()
-    console.log("server started")
-})
+app.use("/api/user", userRouter);
+app.use("/api/auth", authRouter);
 
+// test route
+app.get("/", (req, res) => {
+  res.send("Backend running...");
+});
+
+// gemini route (example)
+app.post("/api/ask", geminiResponse);
+
+const PORT = process.env.PORT || 8000;
+
+app.listen(PORT, () => {
+  console.log("Server started on port", PORT);
+});
+mongoose.connect(process.env.MONGODB_URL)
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.log("MongoDB error:", err.message));
