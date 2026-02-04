@@ -7,6 +7,7 @@ import userRouter from "./routes/user.routes.js";
 import authRouter from "./routes/auth.routes.js";
 import geminiResponse from "./gemini.js";
 
+
 dotenv.config();
 
 const app = express();
